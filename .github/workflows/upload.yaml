@@ -22,6 +22,6 @@ jobs:
             workflow_id: 'download.yaml',
             ref: 'main',
             inputs: {
-              run_id: ${{ github.run_id }}
+              run_id: '${{ github.run_id }}'
             }
           });
