@@ -1,27 +1,25 @@
 name: Upload artifact
 on:
   push:
-    branches: [ main ]
+    branches: [ test ]
 jobs:
   Upload:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
-        name: artifact
-        path: artifact
-    - name: Notify download
-      uses: actions/github-script@v5
+        name: test-artifact
+        path: test/dist/artifact
+        overwrite: true
+
+  Download:
+    runs-on: ubuntu-latest
+    needs: Upload
+    steps:
+    - run: ls -lR .
+    - uses: actions/download-artifact@v4
       with:
-        github-token: ${{ secrets.DOWNLOAD_WORKFLOW_TOKEN }}
-        script: |
-          await github.rest.actions.createWorkflowDispatch({
-            owner: '${{ github.repository_owner }}',
-            repo: 'download-artifact',
-            workflow_id: 'download.yaml',
-            ref: 'main',
-            inputs: {
-              run_id: '${{ github.run_id }}'
-            }
-          });
+        name: test-artifact
+    - run: ls -lR .
+    - run: cat artifact
